@@ -56,11 +56,15 @@ export default {
   },
   methods: {
     signin() {
-      const api = `${process.env.VUE_APP_API}/signin`;
+      const api = `${process.env.VUE_APP_API}/admin/signin`;
       const vm = this;
       this.$http.post(api, vm.user).then((resp) => {
         console.log(resp.data);
         if (resp.data.success) {
+          const token = resp.data.token;
+          const expired = resp.data.expired;
+          // console.log(token, expired);
+          document.cookie = `myToken=${token}; expires=${new Date(expired)};`;
           vm.$router.push("/");
         }
       });

@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div class="login">
     <form class="form-signin" @submit.prevent="signin">
       <img
         class="mb-4"
-        src="/docs/5.0/assets/brand/bootstrap-logo.svg"
+        src="https://getbootstrap.com/docs/5.0/assets/brand/bootstrap-logo.svg"
         alt=""
         width="72"
         height="57"
@@ -58,10 +58,57 @@ export default {
     signin() {
       const api = `${process.env.VUE_APP_API}/signin`;
       const vm = this;
-      this.$http.get(api, vm.user).then((resp) => {
+      this.$http.post(api, vm.user).then((resp) => {
         console.log(resp.data);
+        if (resp.data.success) {
+          vm.$router.push("/");
+        }
       });
     },
   },
 };
 </script>
+<sytle lang="scss" scoped>
+.login{
+  text-align: center!important;
+  // display: flex;
+  // align-items: center;
+  // justify-content: center;
+}
+body {
+  height: 100%;
+}
+
+body {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #f5f5f5;
+}
+
+.form-signin {
+  width: 100%;
+  max-width: 330px;
+  padding: 15px;
+  margin: auto;
+}
+
+.form-signin .checkbox {
+  font-weight: 400;
+}
+
+.form-signin .form-floating:focus-within {
+  z-index: 2;
+}
+
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+</sytle>

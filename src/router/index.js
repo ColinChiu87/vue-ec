@@ -7,9 +7,14 @@ Vue.use(VueRouter)
 
 const routes = [
   {
+    path:'*',
+    redirect: 'login',
+  },
+  {
     path: '',
     name: 'home',
     component: HelloWorld,
+    meta: {requiresAuth: true},
   },
   {
     path: '/login',

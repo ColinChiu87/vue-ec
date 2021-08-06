@@ -65,7 +65,7 @@ export default {
           const expired = resp.data.expired;
           // console.log(token, expired);
           document.cookie = `myToken=${token}; expires=${new Date(expired)};`;
-          vm.$router.push("/");
+          vm.$router.push("/admin/products");
         }
       });
     },
@@ -73,8 +73,8 @@ export default {
 };
 </script>
 <sytle lang="scss" scoped>
-.login{
-  text-align: center!important;
+.login {
+  text-align: center !important;
   // display: flex;
   // align-items: center;
   // justify-content: center;
@@ -84,8 +84,8 @@ body {
 }
 
 body {
-  padding-top: 40px;
-  padding-bottom: 40px;
+  // padding-top: 40px;
+  // padding-bottom: 40px;
   background-color: #f5f5f5;
 }
 

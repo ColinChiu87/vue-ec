@@ -1,5 +1,6 @@
 import axios from 'axios';
 import VueAxios from 'vue-axios';
+import $ from 'jquery';
 import 'bootstrap';
 
 import Vue from 'vue';
@@ -10,6 +11,8 @@ Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
 
 axios.default.withCredentials = true;
+
+window.$ = $;
 
 new Vue({
   router,

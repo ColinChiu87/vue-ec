@@ -25,9 +25,28 @@
       />
       <div class="navbar-nav">
         <div class="nav-item text-nowrap">
-          <a class="nav-link px-3" href="#">Sign out</a>
+          <a class="nav-link px-3" href="#" @click.prevent="signout"
+            >Sign out</a
+          >
         </div>
       </div>
     </header>
   </div>
 </template>
+<script>
+export default {
+  methods: {
+    signout() {
+      const api = `${process.env.VUE_APP_API}/logout`;
+      const vm = this;
+      this.$http.post(api).then((resp) => {
+        console.log(resp);
+        if (resp.data.success) {
+          vm.$router.push("/login");
+        }
+      });
+    },
+  },
+};
+</script>
+

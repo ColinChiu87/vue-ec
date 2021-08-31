@@ -69,6 +69,7 @@
 </template>
 <script>
 // import { defineComponent } from "@vue/composition-api";
+/* global $ */
 export default {
   data() {
     return {

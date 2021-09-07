@@ -1,7 +1,9 @@
 <template>
   <div>
     <div class="text-right mt-4">
-      <button class="btn btn-primary" @click="openModal">建立新產品</button>
+      <button class="btn btn-primary" @click="openModal(true)">
+        建立新產品
+      </button>
     </div>
     <table class="table mt-4">
       <thead>
@@ -25,7 +27,12 @@
             <span v-else>未啟用</span>
           </td>
           <td>
-            <button class="btn btn-outline-primary btn-sm">編輯</button>
+            <button
+              class="btn btn-outline-primary btn-sm"
+              @click="openModal(false, item)"
+            >
+              編輯
+            </button>
           </td>
         </tr>
       </tbody>
@@ -253,6 +260,7 @@ export default {
     return {
       products: [],
       tempProduct: {},
+      isNew: false,
     };
   },
   methods: {
@@ -264,15 +272,34 @@ export default {
         vm.products = resp.data.products;
       });
     },
-    openModal() {
+    openModal(isNew, item) {
+      if (isNew) {
+        this.tempProduct = {};
+        this.isNew = true;
+      } else {
+        this.tempProduct = Object.assign({}.item);
+        this.isNew = false;
+      }
       $("#productModal").modal("show");
     },
     updateProduct() {
+      let api = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/product`;
+      let httpMethod = "post";
       const vm = this;
-      const api = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/product`;
-      this.$http.post(api, { data: vm.tempProduct }).then((resp) => {
+      if (!vm.isNew) {
+        api = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/product/${vm.tempProduct.id}`;
+        httpMethod = "put";
+      }
+      this.$http[httpMethod](api, { data: vm.tempProduct }).then((resp) => {
         console.log(resp.data);
-        // vm.products = resp.data.products;
+        if (resp.data.success) {
+          $("#productModal").modal("hide");
+          vm.getProduct();
+        } else {
+          $("#productModal").modal("hide");
+          vm.getProduct();
+          console.log("新增失敗");
+        }
       });
     },
   },

@@ -84,6 +84,7 @@
                     id="customFile"
                     class="form-control"
                     ref="files"
+                    @change="uploadFile"
                   />
                 </div>
                 <img
@@ -301,6 +302,27 @@ export default {
           console.log("新增失敗");
         }
       });
+    },
+    uploadFile() {
+      console.log(this);
+      const uploadedFile = this.$refs.files.files[0];
+      const vm = this;
+      const formData = new FormData(); //模擬傳統表單送出的形式
+      formData.append("file-to-upload", uploadedFile);
+      const url = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/upload`;
+      this.$http
+        .post(url, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
+          if (res.data.success) {
+            // vm.tempProduct.imageUrl = res.data.imageUrl;
+            vm.$set(vm.tempProduct, "imageUrl", res.data.imageUrl); //強制寫入圖片網址 達成雙向綁定
+          }
+        });
     },
   },
   created() {

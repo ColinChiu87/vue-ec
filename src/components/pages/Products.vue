@@ -1,5 +1,6 @@
 <template>
   <div>
+    <loading :active.sync="isLoading"></loading>
     <div class="text-right mt-4">
       <button class="btn btn-primary" @click="openModal(true)">
         建立新產品
@@ -10,8 +11,8 @@
         <tr>
           <th width="120">分類</th>
           <th>產品分類</th>
-          <th width="80">原價</th>
-          <th width="80">售價</th>
+          <th width="120">原價</th>
+          <th width="120">售價</th>
           <th width="100">是否啟用</th>
           <th width="80">編輯</th>
         </tr>
@@ -27,12 +28,20 @@
             <span v-else>未啟用</span>
           </td>
           <td>
-            <button
-              class="btn btn-outline-primary btn-sm"
-              @click="openModal(false, item)"
-            >
-              編輯
-            </button>
+            <div class="btn-group">
+              <button
+                class="btn btn-outline-primary btn-sm"
+                @click="openModal(false, item)"
+              >
+                編輯
+              </button>
+              <button
+                class="btn btn-outline-danger btn-sm"
+                @click="openDelProductModal(item)"
+              >
+                刪除
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -77,7 +86,10 @@
                 <div class="form-group">
                   <label for="customFile"
                     >或 上傳圖片
-                    <i class="fas fa-spinner fa-spin"></i>
+                    <i
+                      class="fas fa-spinner fa-spin"
+                      v-if="status.fileUploading"
+                    ></i>
                   </label>
                   <input
                     type="file"
@@ -210,7 +222,7 @@
         </div>
       </div>
     </div>
-    <!-- <div
+    <div
       class="modal fade"
       id="delProductModal"
       tabindex="-1"
@@ -250,7 +262,7 @@
           </div>
         </div>
       </div>
-    </div> -->
+    </div>
   </div>
 </template>
 <script>
@@ -262,15 +274,21 @@ export default {
       products: [],
       tempProduct: {},
       isNew: false,
+      isLoading: false,
+      status: {
+        fileUploading: false,
+      },
     };
   },
   methods: {
     getProduct() {
       const vm = this;
       const api = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_CUSTOMPATH}/products`;
+      vm.isLoading = true;
       this.$http.get(api).then((resp) => {
         console.log(resp.data);
         vm.products = resp.data.products;
+        vm.isLoading = false;
       });
     },
     openModal(isNew, item) {
@@ -282,6 +300,9 @@ export default {
         this.isNew = false;
       }
       $("#productModal").modal("show");
+    },
+    openDelProductModal(item) {
+      $("#delProductModal").modal("show");
     },
     updateProduct() {
       let api = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/product`;
@@ -310,6 +331,7 @@ export default {
       const formData = new FormData(); //模擬傳統表單送出的形式
       formData.append("file-to-upload", uploadedFile);
       const url = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/upload`;
+      vm.status.fileUploading = true;
       this.$http
         .post(url, formData, {
           headers: {
@@ -318,9 +340,12 @@ export default {
         })
         .then((res) => {
           console.log(res.data);
+          vm.status.fileUploading = false;
           if (res.data.success) {
             // vm.tempProduct.imageUrl = res.data.imageUrl;
             vm.$set(vm.tempProduct, "imageUrl", res.data.imageUrl); //強制寫入圖片網址 達成雙向綁定
+          } else {
+            this.$bus.$emit("message:push", res.data.message, "danger");
           }
         });
     },

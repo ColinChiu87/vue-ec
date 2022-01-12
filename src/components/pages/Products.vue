@@ -6,6 +6,7 @@
         建立新產品
       </button>
     </div>
+    <!-- 商品表格 -->
     <table class="table mt-4">
       <thead>
         <tr>
@@ -46,6 +47,37 @@
         </tr>
       </tbody>
     </table>
+    <!-- 分頁 -->
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <li class="page-item" :class="{ disabled: !pagination.has_pre }">
+          <a
+            class="page-link"
+            href="#"
+            @click.prevent="getProduct(pagination.current_page - 1)"
+            >Previous</a
+          >
+        </li>
+        <li
+          class="page-item"
+          v-for="page in pagination.total_pages"
+          :key="page"
+          :class="{ active: pagination.current_page == page }"
+        >
+          <a class="page-link" href="#" @click.prevent="getProduct(page)">{{
+            page
+          }}</a>
+        </li>
+        <li class="page-item" :class="{ disabled: !pagination.has_next }">
+          <a
+            class="page-link"
+            href="#"
+            @click.prevent="getProduct(pagination.current_page + 1)"
+            >Next</a
+          >
+        </li>
+      </ul>
+    </nav>
     <!-- Modal -->
     <div
       class="modal fade"
@@ -275,6 +307,7 @@ export default {
     return {
       products: [],
       tempProduct: {},
+      pagination: {},
       isNew: false,
       isLoading: false,
       status: {
@@ -283,13 +316,14 @@ export default {
     };
   },
   methods: {
-    getProduct() {
+    getProduct(page = 1) {
       const vm = this;
-      const api = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_CUSTOMPATH}/products`;
+      const api = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_CUSTOMPATH}/products?page=${page}`;
       vm.isLoading = true;
       this.$http.get(api).then((resp) => {
         console.log(resp.data);
-        vm.products = resp.data.products;
+        vm.products = resp.data.products; //抓取商品資料
+        vm.pagination = resp.data.pagination; // 抓取頁碼資料
         vm.isLoading = false;
       });
     },

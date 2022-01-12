@@ -22,8 +22,8 @@
         <tr v-for="item in products" :key="item.id">
           <td>{{ item.category }}</td>
           <td>{{ item.title }}</td>
-          <td class="text-right">{{ item.origin_price }}</td>
-          <td class="text-right">{{ item.price }}</td>
+          <td class="text-right">{{ item.origin_price | currency }}</td>
+          <td class="text-right">{{ item.price | currency }}</td>
           <td>
             <span v-if="item.is_enabled" class="text-success">啟用</span>
             <span v-else>未啟用</span>
@@ -47,6 +47,7 @@
         </tr>
       </tbody>
     </table>
+
     <!-- 分頁 -->
     <nav aria-label="Page navigation example">
       <ul class="pagination">
@@ -78,6 +79,9 @@
         </li>
       </ul>
     </nav>
+    <!-- 分頁元件 -->
+    <!-- <pagination :pagination="pagination" @getPro="getProduct"></pagination> -->
+
     <!-- Modal -->
     <div
       class="modal fade"
@@ -301,8 +305,10 @@
 </template>
 <script>
 // import { defineComponent } from "@vue/composition-api";
+import Pagination from "@/components/Pagination.vue";
 /* global $ */
 export default {
+  components: { Pagination },
   data() {
     return {
       products: [],

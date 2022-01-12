@@ -258,7 +258,9 @@
             >
               取消
             </button>
-            <button type="button" class="btn btn-danger">確認刪除</button>
+            <button type="button" class="btn btn-danger" @click="delProduct">
+              確認刪除
+            </button>
           </div>
         </div>
       </div>
@@ -348,6 +350,19 @@ export default {
             this.$bus.$emit("message:push", res.data.message, "danger");
           }
         });
+    },
+    delProduct() {
+      const vm = this;
+      let api = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/product/${vm.tempProduct.id}`;
+      this.$http.delete(api).then((res) => {
+        console.log(res);
+        if (res.data.success) {
+          console.log("成功刪除");
+          $("#delProductModal").modal("hide");
+        } else {
+          console.log("刪除失敗");
+        }
+      });
     },
   },
   created() {
